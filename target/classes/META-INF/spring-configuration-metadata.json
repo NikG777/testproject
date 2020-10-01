@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "storage",
+      "type": "com.nikita.testproject.FileUpDown.StorageProperties",
+      "sourceType": "com.nikita.testproject.FileUpDown.StorageProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "storage.location",
+      "type": "java.lang.String",
+      "sourceType": "com.nikita.testproject.FileUpDown.StorageProperties"
+    }
+  ],
+  "hints": []
+}
