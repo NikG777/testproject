@@ -11,6 +11,8 @@ import com.nikita.testproject.response.UserResponse;
 import com.nikita.testproject.validator.UserAccValidator;
 import com.nikita.testproject.entities.UserEntity;
 import com.nikita.testproject.service.UserService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,7 +86,7 @@ import java.io.UnsupportedEncodingException;
             return "password was reset";
         else return "password not reset";
     }
-
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization")
     @PostMapping("/password/reset")
     public String makeQueryForReset(@RequestBody EmailRequest req) {
         if (userService.resetUserPassword(req.getEmail())) {
@@ -92,6 +94,7 @@ import java.io.UnsupportedEncodingException;
         } else return "false";
     }
 
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization")
     @PostMapping("/user/getinfo")
     public ResponseEntity<?> returnUserInfo(HttpServletRequest request) {
        UserEntity user = userService.findByLogin(jwtProvider.getLoginFromToken(request.getHeader("Authorization").substring(7)));

@@ -44,10 +44,10 @@ public class UserService {
             userEntity.setActivationCode(UUID.randomUUID().toString());
             //email sending
             if (!StringUtils.isEmpty(userEntity.getEmail())) {
-                String message = String.format("Privet, %s! \n" +
-                        "Welcome. http://localhost:8080/activate/%s", userEntity.getActivationCode(), userEntity.getLogin());
+                String message = String.format("Привет, %s! \n" +
+                        "Ваша ссылка активации: http://188.244.5.33:8080/activate/" + userEntity.getActivationCode(), userEntity.getLogin());
 
-                mailSender.send(userEntity.getEmail(), "Activation code", message);
+                mailSender.send(userEntity.getEmail(), "Код активации", message);
             }
             return userEntityRepository.save(userEntity);
         } catch (NullPointerException e) {
