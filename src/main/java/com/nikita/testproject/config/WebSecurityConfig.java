@@ -15,13 +15,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtFilter jwtFilter;
     @Override
-
     protected void configure(HttpSecurity http) throws Exception
     {
         http.httpBasic().disable().cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/admin/*").hasRole("ADMIN")
-                .antMatchers("/api/auth/**","/upload-file/*","/activate/*","/password/**", "/").permitAll()
-                .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/api/auth/**","/activate/*").permitAll()
+                .antMatchers("/upload-file/*","/user/**","/password/**", "/download").hasRole("USER")
                 .antMatchers(HttpMethod.POST, "/authenticate").permitAll() //
             .antMatchers(HttpMethod.POST, "/register").permitAll()
                // For Test on Browser

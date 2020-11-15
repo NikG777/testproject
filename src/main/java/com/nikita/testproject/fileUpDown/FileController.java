@@ -1,15 +1,18 @@
-package com.nikita.testproject.FileUpDown;
+package com.nikita.testproject.fileUpDown;
 
 import com.nikita.testproject.entities.UserEntity;
 import com.nikita.testproject.filter.JwtProvider;
 import com.nikita.testproject.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -33,20 +36,21 @@ public class FileController {
         this.storageService = storageService;
     }
 
-    @GetMapping("/allfiles")
-    @ResponseBody
-    public String listAllFiles(Model model) {
-
-         storageService.loadAll().map(
-                path -> ServletUriComponentsBuilder.fromCurrentContextPath()
-                        .path("/download/")
-                        .path(path.getFileName().toString())
-                        .toUriString())
-                .collect(Collectors.toList());
-
-        return "listFiles";
-    }
-
+//    @GetMapping("/allfiles")
+//    @ResponseBody
+//    public String listAllFiles(Model model) {
+//
+//         storageService.loadAll().map(
+//                path -> ServletUriComponentsBuilder.fromCurrentContextPath()
+//                        .path("/download/")
+//                        .path(path.getFileName().toString())
+//                        .toUriString())
+//                .collect(Collectors.toList());
+//
+//        return "listFiles";
+//    }
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
     @GetMapping("/download/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename, HttpServletRequest request) {
@@ -59,7 +63,8 @@ public class FileController {
                         "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
-
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
     @PostMapping("/upload-file")
     @ResponseBody
     public FileResponse uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request ) {
@@ -75,7 +80,8 @@ public class FileController {
             return new FileResponse(name, uri, file.getContentType(), file.getSize());
 
     }
-
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
     @PostMapping("/upload-multiple-files")
     @ResponseBody
     public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files, HttpServletRequest request) {
@@ -83,6 +89,8 @@ public class FileController {
                 .map(file -> uploadFile(file,request))
                 .collect(Collectors.toList());
     }
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
     @PostMapping("/update-picture")
     @ResponseBody
     public FileResponse updatePicture(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request)
@@ -100,8 +108,10 @@ public class FileController {
         return new FileResponse(name, uri, multipartFile.getContentType(), multipartFile.getSize());
 
     }
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
     @PostMapping("/delete-user-picture")
-    @ResponseStatus
+    @ResponseBody
     public boolean deletePicture(HttpServletRequest request)
     {
         UserEntity user = userService.findByLogin(jwtProvider.getLoginFromToken(request.getHeader("Authorization").substring(7)));

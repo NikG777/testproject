@@ -1,9 +1,7 @@
-package com.nikita.testproject.FileUpDown;
+package com.nikita.testproject.fileUpDown;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import java.io.IOException;
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST)
 public class StorageException extends RuntimeException {

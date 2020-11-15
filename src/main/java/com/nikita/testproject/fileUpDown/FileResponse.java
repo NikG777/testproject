@@ -1,4 +1,4 @@
-package com.nikita.testproject.FileUpDown;
+package com.nikita.testproject.fileUpDown;
 
 import lombok.Data;
 

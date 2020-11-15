@@ -1,16 +1,21 @@
 {
   "groups": [
     {
+      "name": "openapi",
+      "type": "com.nikita.testproject.config.OpenApiConfig",
+      "sourceType": "com.nikita.testproject.config.OpenApiConfig"
+    },
+    {
       "name": "storage",
-      "type": "com.nikita.testproject.FileUpDown.StorageProperties",
-      "sourceType": "com.nikita.testproject.FileUpDown.StorageProperties"
+      "type": "com.nikita.testproject.fileUpDown.StorageProperties",
+      "sourceType": "com.nikita.testproject.fileUpDown.StorageProperties"
     }
   ],
   "properties": [
     {
       "name": "storage.location",
       "type": "java.lang.String",
-      "sourceType": "com.nikita.testproject.FileUpDown.StorageProperties"
+      "sourceType": "com.nikita.testproject.fileUpDown.StorageProperties"
     }
   ],
   "hints": []

@@ -11,11 +11,17 @@ import com.nikita.testproject.response.UserResponse;
 import com.nikita.testproject.validator.UserAccValidator;
 import com.nikita.testproject.entities.UserEntity;
 import com.nikita.testproject.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +37,7 @@ import java.io.UnsupportedEncodingException;
     private UserAccValidator userAccValidator;
     @Autowired
     private JwtProvider jwtProvider;
-    @Autowired
-    private JwtFilter jwtFilter;
+
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Valid UserAccRequest registrationRequest, BindingResult result) {
@@ -46,14 +51,15 @@ import java.io.UnsupportedEncodingException;
         u.setEmail(registrationRequest.getEmail());
         // Необходимо продумать возврат ошибки
         if (userService.findByLogin(u.getLogin()) != null || userService.findByEmail(u.getEmail()) != null) {
-            return new ResponseEntity<>("Bad", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>( "{\"message\":\"This email or login is already exist!\"}", HttpStatus.BAD_REQUEST);
         } else {
             userService.saveUser(u);
-            return new ResponseEntity<>("OK", HttpStatus.OK);
+            return new ResponseEntity<>("{\"message\":\"Thank's for registration!\"}", HttpStatus.OK);
         }
     }
 
     @CrossOrigin(origins = "*", maxAge = 3600)
+
     @PostMapping("/authenticate")
     public ResponseEntity<?> auth(@RequestBody @Valid UserAccRequest request, BindingResult result)  {
         userAccValidator.validate(request, result);
@@ -65,16 +71,16 @@ import java.io.UnsupportedEncodingException;
             String token = jwtProvider.generateToken(userEntity.getLogin(),userEntity.getRoleEntity().getName());
             return new ResponseEntity<>(new AuthResponse(token), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Такого пользователя не существует", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("{\"message\":\"User not found\"}", HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/activate/{code}")
+    @PostMapping("/activate/{code}")
     public String activate(@PathVariable String code) {
         boolean isActivated = userService.activateUser(code);
         if (isActivated) {
-            return "Activation success";
+            return "{\"message\":\"Activation success\"}";
         } else {
-            return "Link not work";
+            return "{\"message\":\"Link not work!\"}";
         }
     }
 
@@ -83,19 +89,23 @@ import java.io.UnsupportedEncodingException;
         boolean isReset = userService.updateUserPassword(code, req.getPassword());
 
         if (isReset)
-            return "password was reset";
-        else return "password not reset";
+            return "{\"message\":\"password was reset\"}";
+        else return "{\"message\":\"password not reset\"}";
     }
-    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization")
+
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
     @PostMapping("/password/reset")
     public String makeQueryForReset(@RequestBody EmailRequest req) {
         if (userService.resetUserPassword(req.getEmail())) {
-            return "good";
-        } else return "false";
+            return "{\"message\":\"Password was reset!\"}";
+        } else return "{\"message\":\"Password not reset!\"}";
     }
 
-    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization")
-    @PostMapping("/user/getinfo")
+   @Operation(security = { @SecurityRequirement(name = "bearer-key") })
+   @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
+   // @SecurityRequirements
+   @PostMapping("/user/getinfo")
     public ResponseEntity<?> returnUserInfo(HttpServletRequest request) {
        UserEntity user = userService.findByLogin(jwtProvider.getLoginFromToken(request.getHeader("Authorization").substring(7)));
         return new ResponseEntity<>(new UserResponse(user.getLogin(), user.getUrl_picture()), HttpStatus.OK);
