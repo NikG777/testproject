@@ -102,14 +102,6 @@ import java.io.UnsupportedEncodingException;
         } else return "{\"message\":\"Password not reset!\"}";
     }
 
-   @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-   @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
-   // @SecurityRequirements
-   @PostMapping("/user/getinfo")
-    public ResponseEntity<?> returnUserInfo(HttpServletRequest request) {
-       UserEntity user = userService.findByLogin(jwtProvider.getLoginFromToken(request.getHeader("Authorization").substring(7)));
-        return new ResponseEntity<>(new UserResponse(user.getLogin(), user.getUrl_picture()), HttpStatus.OK);
 
-    }
 
 }
