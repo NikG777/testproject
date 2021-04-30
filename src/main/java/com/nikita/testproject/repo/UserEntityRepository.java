@@ -12,7 +12,6 @@ import java.util.List;
 public interface UserEntityRepository extends JpaRepository<UserEntity, Integer> {
 
     UserEntity findByLogin(String login);
-
     UserEntity findByActivationCode(String code);
     UserEntity findByEmail(String email);
     UserEntity findUserEntityByPasswordEntity_Token(String token);

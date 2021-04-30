@@ -44,10 +44,10 @@ public class UserService {
             userEntity.setActivationCode(UUID.randomUUID().toString());
             //email sending
             if (!StringUtils.isEmpty(userEntity.getEmail())) {
-                String message = String.format("Привет, %s! \n" +
-                        "Ваша ссылка активации: http://188.244.5.33:8080/activate/" + userEntity.getActivationCode(), userEntity.getLogin());
+                String message = String.format("Hi, %s! \n" +
+                        "Your activation code: http://188.244.5.33:8080/activate/" + userEntity.getActivationCode(), userEntity.getLogin());
 
-                mailSender.send(userEntity.getEmail(), "Код активации", message);
+                mailSender.send(userEntity.getEmail(), "Activation code", message);
             }
             return userEntityRepository.save(userEntity);
         } catch (NullPointerException e) {
@@ -107,17 +107,13 @@ public class UserService {
         try {
             UserEntity user = userEntityRepository.findByEmail(email);
             Date date = new Date();
-
             PasswordEntity passwordEntity = new PasswordEntity();
             passwordEntity.setToken(UUID.randomUUID().toString());
             passwordEntity.setDate(date);
-
             user.setPasswordEntity(passwordEntity);
-
             if (!StringUtils.isEmpty(user.getEmail())) {
-                String message = String.format("Privet, %s! \n" +
-                        "Welcome. http://localhost:8080/password/reset/%s", user.getPasswordEntity().getToken(), user.getLogin());
-
+                String message = String.format("Hi, %s! \n" +
+                        "Create post query for changing password. http://localhost:8080/password/reset/%s",user.getLogin(), user.getPasswordEntity().getToken());
                 mailSender.send(user.getEmail(), "Reset code", message);
             }
             userEntityRepository.save(user);

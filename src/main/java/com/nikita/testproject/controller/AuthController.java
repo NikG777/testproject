@@ -74,7 +74,7 @@ import java.io.UnsupportedEncodingException;
         return new ResponseEntity<>("{\"message\":\"User not found\"}", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/activate/{code}")
+    @GetMapping("/activate/{code}")
     public String activate(@PathVariable String code) {
         boolean isActivated = userService.activateUser(code);
         if (isActivated) {
@@ -93,13 +93,11 @@ import java.io.UnsupportedEncodingException;
         else return "{\"message\":\"password not reset\"}";
     }
 
-    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
-    @Parameter(in = ParameterIn.HEADER, description = "Header Authorization со строкой Bearer_/token/", name = "Authorization", required = true)
     @PostMapping("/password/reset")
     public String makeQueryForReset(@RequestBody EmailRequest req) {
         if (userService.resetUserPassword(req.getEmail())) {
-            return "{\"message\":\"Password was reset!\"}";
-        } else return "{\"message\":\"Password not reset!\"}";
+            return "{\"message\":\"Get link and reset password!\"}";
+        } else return "{\"message\":\"This email is not exist!\"}";
     }
 
 

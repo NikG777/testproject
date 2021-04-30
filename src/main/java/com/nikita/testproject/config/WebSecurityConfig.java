@@ -19,8 +19,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     {
         http.httpBasic().disable().cors().and().csrf().disable()
                 .authorizeRequests().antMatchers("/admin/*").hasRole("ADMIN")
-                .antMatchers("/api/auth/**","/activate/*").permitAll()
-                .antMatchers("/upload-file/*","/user/**","/password/**", "/download").hasRole("USER")
+                .antMatchers("/api/auth/**","/activate/*","password/**").permitAll()
+                .antMatchers("/upload-file/*","/user/**", "/download").hasRole("USER")
                 .antMatchers(HttpMethod.POST, "/authenticate").permitAll() //
             .antMatchers(HttpMethod.POST, "/register").permitAll()
                // For Test on Browser
